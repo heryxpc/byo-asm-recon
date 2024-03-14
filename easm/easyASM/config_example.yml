@@ -8,3 +8,4 @@ runConfig:
   runType: fast   # Set to either fast (passive enum) or complete (active enumeration).
   activeWordList: subdomainWordlist.txt
   activeThreads: 100
+  
