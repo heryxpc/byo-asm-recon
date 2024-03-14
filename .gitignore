@@ -1,0 +1,4 @@
+# Ignore CSV files
+easm/*.csv
+venv/
+.DS_Store

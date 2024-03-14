@@ -1,0 +1,7 @@
+slack:
+  - id: "slack"
+    slack_channel: "test-notify"
+    slack_username: "your-username"
+    slack_format: "{{data}}"
+    slack_webhook_url: "https://hooks.slack.com/services/example/your/webhook/url"
+
