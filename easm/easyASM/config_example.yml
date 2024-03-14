@@ -1,0 +1,11 @@
+# EasyEASM configurations
+runConfig:
+  domains:  # List root domains here.
+    - example.com
+    - mydomain.com
+  slack: https://hooks.slack.com/services/DUMMYDATA/DUMMYDATA/RANDOM # Slack webhook url for Slack notifications.
+  discord: https://discord.com/api/webhooks/DUMMYURL/Dasdfsdf # Discord webhook for Discord notifications.
+  runType: fast   # Set to either fast (passive enum) or complete (active enumeration).
+  activeWordList: subdomainWordlist.txt
+  activeThreads: 100
+  
