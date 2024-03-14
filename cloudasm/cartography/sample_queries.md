@@ -72,7 +72,7 @@ return a.name as AWSAccount, count(rds) as UnencryptedInstances
     MATCH (lb)-[:MEMBER_OF_EC2_SECURITY_GROUP]->(sg:EC2SecurityGroup)
     MATCH (sg)<-[:MEMBER_OF_EC2_SECURITY_GROUP]-(ipi:IpPermissionInbound)
     MATCH (ipi)<--(ir:IpRange)
-    WHERE ir.range = "0.0.0.0/0" AND ipi.toport <> 443 AND ipi.toport <> 80 AND ipi.toport <> -1
+    WHERE ir.range = "0.0.0.0/0"
     RETURN DISTINCT ipi.toport as port, dns.name as `dnsname`
 ```
 ## Query all open ports via ELBv2
