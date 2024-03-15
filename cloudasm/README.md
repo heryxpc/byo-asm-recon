@@ -14,7 +14,6 @@
 Create a `.env` file at [cloudquery](./cloudquery) with content:
 ```
 CLOUDQUERY_API_KEY=your_api_key
-POSTGRESQL_CONNECTION_STRING=postgres://postgres:{PASS_FROM_DOCKER_COMPOSE}@postgres:5432/postgres?sslmode=disable
 ```
 
 
@@ -29,7 +28,6 @@ Sample `.env`:
 CLOUDQUERY_API_KEY=your_api_key
 AWS_ACCESS_KEY_ID={Your AWS Access Key ID}
 AWS_SECRET_ACCESS_KEY={Your AWS secret access key}
-POSTGRESQL_CONNECTION_STRING=postgres://postgres:{PASS_FROM_DOCKER_COMPOSE}@postgres:5432/
 ```
 
 ## Build containers with docker compose
