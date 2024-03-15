@@ -1,0 +1,22 @@
+kind: source
+spec:
+  name: aws
+  path: cloudquery/aws
+  registry: cloudquery
+  version: "v25.2.2"
+  tables: ["aws_ec2_*", "aws_s3_bucket*", "aws_iam_*", "aws_ecr_*", ""aws_ecs_*"", "aws_elbv*"]
+  skip_dependent_tables: false
+  deterministic_cq_id: true
+  destinations: ["postgresql"]
+  spec:
+    regions:
+    - us-east-1
+---
+kind: destination
+spec:
+  name: postgresql
+  path: cloudquery/postgresql
+  registry: cloudquery
+  version: "v7.5.0"
+  spec:
+    connection_string: "postgres://postgres:pass@postgres:5432/postgres?sslmode=disable"
