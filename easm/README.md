@@ -7,7 +7,7 @@ Follow below instructions to perfr
 - Python > 3.10
 
 ## Setup
-Create e new environment varible to store shodan API key
+Create e new environment variable to store Shodan API key
 ```bash
 export SHODAN_API_KEY=your_api_key
 ```

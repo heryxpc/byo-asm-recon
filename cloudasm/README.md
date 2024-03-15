@@ -4,7 +4,7 @@
 
 ## Requirements
 - AWS Account
-- AWS authentication credentials (see [ClouQquery -> plugins -> AWS -> Authentication](https://hub.cloudquery.io/plugins/source/cloudquery/aws/latest/docs#authentication) )
+- AWS authentication credentials (see [CloudQquery -> plugins -> AWS -> Authentication](https://hub.cloudquery.io/plugins/source/cloudquery/aws/latest/docs#authentication) )
 - [Docker compose](https://docs.docker.com/compose/)
 - [CloudQuery account](https://www.cloudquery.io/auth/register)
 
@@ -115,7 +115,7 @@ Takes around 45 minutes to complete.
 1. Play around with the information presented
 
 ## Option 3 - use neo4j dump backup
-Would need to restart and healthcheck from the [docker-compose.yaml](./cartography/docker-compose.yaml) to avoid Docker to keep restarting neo4j when shutting down.
+Would need to `restart` and `healthcheck`options from the [docker-compose.yaml](./cartography/docker-compose.yaml) to avoid Docker to keep restarting neo4j when shutting down.
 ```yml
 # restart: unless-stopped
 # healthcheck:
