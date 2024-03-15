@@ -1,0 +1,449 @@
+{
+  "title": "Cloud Exposure Dashboard",
+  "version": "2.3",
+  "settings": {
+    "pagenumber": 0,
+    "editable": true,
+    "fullscreenEnabled": false,
+    "parameters": {
+      "neodash_action_keyword": "ec2",
+      "neodash_ec2instance_public_ip": "",
+      "neodash_ec2instance_public_ip_display": "",
+      "neodash_ec2instance_publicipaddress": "",
+      "neodash_ec2instance_publicipaddress_display": "",
+      "neodash_ec2privateip_public_ip": "127.0.0.1",
+      "neodash_ec2privateip_public_ip_display": "127.0.0.1",
+      "neodash_ip": "127.0.0.1",
+      "neodash_networkinterface_public_ip": "127.0.0.1",
+      "neodash_networkinterface_public_ip_display": "127.0.0.1"
+    },
+    "theme": "light"
+  },
+  "pages": [
+    {
+      "title": "Internet Exposure",
+      "reports": [
+        {
+          "id": "c6c6f7e4-42ab-484c-bcc1-ffad55cfcef6",
+          "title": "EC2 Instances",
+          "query": "match (a:AWSAccount)-[r:RESOURCE]->(e:EC2Instance)\nreturn a.id as account_id, a.name as account_name, e.instancetype as instance_type, size(collect(e.instancetype)) as instance_count, datetime({epochseconds:e.lastupdated}) as last_updated order by account_name, instance_count desc\n",
+          "width": 6,
+          "height": 1,
+          "x": 0,
+          "y": 0,
+          "type": "table",
+          "selection": {},
+          "settings": {},
+          "schema": []
+        },
+        {
+          "id": "b39c5bf0-f498-41b0-89c4-c3862a720a13",
+          "title": "Open ports exposed by Elastic Load Balancers (v1 and V2)",
+          "query": "MATCH (elb:LoadBalancer{exposed_internet: true})—->(listener:ELBListener)\nRETURN DISTINCT elb.dnsname as dnsname, listener.port as port \nUNION\nMATCH (lb:LoadBalancerV2)-[:ELBV2_LISTENER]->(l:ELBV2Listener)\nWHERE lb.scheme = \"internet-facing\"\nRETURN DISTINCT lb.dnsname as dnsname, l.port as port\n",
+          "width": 6,
+          "height": 1,
+          "x": 0,
+          "y": 1,
+          "type": "table",
+          "selection": {},
+          "settings": {
+            "columnWidths": "[4,1]"
+          },
+          "schema": []
+        },
+        {
+          "id": "ecbf83cf-c7e7-4965-a417-788127d8fe14",
+          "title": "Query open ports and Security Groups",
+          "query": "MATCH (open)-[:MEMBER_OF_EC2_SECURITY_GROUP]->(sg:EC2SecurityGroup)\nMATCH (sg)<-[:MEMBER_OF_EC2_SECURITY_GROUP]-(ipi:IpPermissionInbound)\nMATCH (ipi)<--(ir:IpRange)\nWHERE ir.range = \"0.0.0.0/0\"\nOPTIONAL MATCH (dns:AWSDNSRecord)-[:DNS_POINTS_TO]->(lb)\nWHERE open.scheme = \"internet-facing\"\nRETURN DISTINCT ipi.toport as port, open.id, sg.id",
+          "width": 5,
+          "height": 2,
+          "x": 6,
+          "y": 0,
+          "type": "table",
+          "selection": {},
+          "settings": {},
+          "schema": []
+        },
+        {
+          "id": "e5ceaa90-547b-42c0-a740-2d601e93501e",
+          "title": "Find everything around an IP",
+          "query": "MATCH (n:EC2PrivateIp)-[r]-(n2)\nWHERE n.public_ip = $neodash_ip\nreturn n, r, n2\n\nUNION MATCH(n:EC2Instance)-[r]-(n2)\nWHERE n.publicipaddress = $neodash_ip\nreturn  n, r, n2\n\nUNION MATCH(n:NetworkInterface)-[r]-(n2)\nWHERE n.public_ip = $neodash_ip\nreturn n, r, n2\n\nUNION MATCH(n:ElasticIPAddress)-[r]-(n2)\nWHERE n.public_ip = $neodash_ip\nreturn n, r, n2\n",
+          "width": 8,
+          "height": 4,
+          "x": 0,
+          "y": 2,
+          "type": "graph",
+          "selection": {
+            "EC2PrivateIp": "id",
+            "RESOURCE": "(label)",
+            "AWSAccount": "name",
+            "PRIVATE_IP_ADDRESS": "(label)",
+            "NetworkInterface": "id",
+            "MEMBER_OF_EC2_SECURITY_GROUP": "(label)",
+            "EC2SecurityGroup": "name",
+            "PART_OF_SUBNET": "(label)",
+            "EC2Subnet": "id"
+          },
+          "settings": {
+            "fullscreenEnabled": true,
+            "downloadImageEnabled": true
+          },
+          "schema": [
+            [
+              "EC2PrivateIp",
+              "firstseen",
+              "public_ip",
+              "lastupdated",
+              "ip_owner_id",
+              "private_ip_address",
+              "id",
+              "network_interface_id",
+              "primary"
+            ],
+            [
+              "RESOURCE",
+              "firstseen",
+              "lastupdated"
+            ],
+            [
+              "AWSAccount",
+              "firstseen",
+              "name",
+              "inscope",
+              "lastupdated",
+              "id"
+            ],
+            [
+              "PRIVATE_IP_ADDRESS",
+              "firstseen",
+              "lastupdated"
+            ],
+            [
+              "NetworkInterface",
+              "subnetid",
+              "public_ip",
+              "requester_managed",
+              "description",
+              "source_dest_check",
+              "firstseen",
+              "mac_address",
+              "lastupdated",
+              "private_ip_address",
+              "id",
+              "interface_type",
+              "region",
+              "private_dns_name",
+              "status",
+              "requester_id"
+            ],
+            [
+              "MEMBER_OF_EC2_SECURITY_GROUP",
+              "firstseen",
+              "lastupdated"
+            ],
+            [
+              "EC2SecurityGroup",
+              "firstseen",
+              "groupid",
+              "name",
+              "description",
+              "lastupdated",
+              "id",
+              "region"
+            ],
+            [
+              "PART_OF_SUBNET",
+              "firstseen",
+              "lastupdated"
+            ],
+            [
+              "EC2Subnet",
+              "firstseen",
+              "subnet_id",
+              "lastupdated",
+              "id",
+              "region"
+            ]
+          ]
+        },
+        {
+          "id": "a490110a-758c-4d4e-93e6-fe5024abc77e",
+          "title": "IP to investigate",
+          "query": "RETURN true;",
+          "width": 3,
+          "height": 1,
+          "x": 8,
+          "y": 2,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Free Text",
+            "entityType": "ip",
+            "parameterName": "neodash_ip"
+          },
+          "schema": []
+        },
+        {
+          "id": "6db43db2-caac-4b21-ad11-2516686eaabc",
+          "title": "EC2 Instance Public IPs",
+          "query": "MATCH (n:`EC2Instance`) \nWHERE toLower(toString(n.`publicipaddress`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`publicipaddress` as value,  n.`publicipaddress` as display ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 8,
+          "y": 3,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "EC2Instance",
+            "propertyType": "publicipaddress",
+            "propertyTypeDisplay": "publicipaddress",
+            "parameterName": "neodash_ec2instance_publicipaddress"
+          },
+          "schema": []
+        },
+        {
+          "id": "4136e91e-cc15-4acc-b269-8dfa4855e5a2",
+          "title": "EC2 Private IPs",
+          "query": "MATCH (n:`EC2PrivateIp`) \nWHERE toLower(toString(n.`public_ip`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`public_ip` as value,  n.`public_ip` as display ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 8,
+          "y": 4,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "EC2PrivateIp",
+            "propertyType": "public_ip",
+            "propertyTypeDisplay": "public_ip",
+            "parameterName": "neodash_ec2privateip_public_ip"
+          },
+          "schema": []
+        },
+        {
+          "id": "e40ec8ea-7f84-4969-91f8-66d0c0cb52fe",
+          "title": "ElasticIP",
+          "query": "MATCH (n:`ElasticIPAddress`) \nWHERE toLower(toString(n.`public_ip`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`public_ip` as value,  n.`public_ip` as display ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 8,
+          "y": 5,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "ElasticIPAddress",
+            "propertyType": "public_ip",
+            "propertyTypeDisplay": "public_ip",
+            "parameterName": "neodash_elasticipaddress_public_ip"
+          },
+          "schema": []
+        },
+        {
+          "id": "08a4385d-b99a-403b-b6da-770723f59776",
+          "title": "Network Interface IP",
+          "query": "MATCH (n:`NetworkInterface`) \nWHERE toLower(toString(n.`public_ip`)) CONTAINS toLower($input) \nRETURN DISTINCT n.`public_ip` as value,  n.`public_ip` as display ORDER BY size(toString(value)) ASC LIMIT 5",
+          "width": 3,
+          "height": 1,
+          "x": 8,
+          "y": 6,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Node Property",
+            "entityType": "NetworkInterface",
+            "propertyType": "public_ip",
+            "propertyTypeDisplay": "public_ip",
+            "parameterName": "neodash_networkinterface_public_ip"
+          },
+          "schema": []
+        }
+      ]
+    },
+    {
+      "title": "Roles and Permissions",
+      "reports": [
+        {
+          "id": "a3896403-9801-4c7e-a3ad-d008b8523170",
+          "title": "Roles with full permission to certain resource kind",
+          "query": "match (r:AWSRole)-[p:POLICY]-(pol:AWSPolicy)-[s:STATEMENT]->(stmt:AWSPolicyStatement)\nwhere any(x in stmt.action where x contains $neodash_action_keyword) return * limit 30;\n",
+          "width": 8,
+          "height": 2,
+          "x": 0,
+          "y": 3,
+          "type": "graph",
+          "selection": {
+            "POLICY": "(label)",
+            "AWSPolicy": "name",
+            "AWSPrincipal": "name",
+            "AWSRole": "name",
+            "STATEMENT": "(label)",
+            "AWSPolicyStatement": "resource"
+          },
+          "settings": {
+            "downloadImageEnabled": true,
+            "hideSelections": false,
+            "fullscreenEnabled": true,
+            "layout": "tree"
+          },
+          "schema": [
+            [
+              "POLICY",
+              "lastupdated"
+            ],
+            [
+              "AWSPolicy",
+              "firstseen",
+              "name",
+              "lastupdated",
+              "id",
+              "type"
+            ],
+            [
+              "AWSPrincipal",
+              "firstseen",
+              "path",
+              "roleid",
+              "name",
+              "createdate",
+              "lastupdated",
+              "arn"
+            ],
+            [
+              "AWSRole",
+              "firstseen",
+              "path",
+              "roleid",
+              "name",
+              "createdate",
+              "lastupdated",
+              "arn"
+            ],
+            [
+              "STATEMENT",
+              "firstseen",
+              "lastupdated"
+            ],
+            [
+              "AWSPolicyStatement",
+              "resource",
+              "effect",
+              "action",
+              "lastupdated",
+              "id",
+              "condition",
+              "sid"
+            ]
+          ]
+        },
+        {
+          "id": "e5cfab12-5b75-415a-90a5-0c352bd4773a",
+          "title": "Users with full access to a given resource",
+          "query": "MATCH(user:AWSUser)--(policy:AWSPolicy)--(statement:AWSPolicyStatement{resource:['*'], effect:'Allow'})\nWITH user.name as user, policy.name as policy, statement.action as actions\nUNWIND actions as action\nWITH user,policy,action\nRETURN user,policy,action\nORDER BY user\n\n",
+          "width": 11,
+          "height": 3,
+          "x": 0,
+          "y": 0,
+          "type": "table",
+          "selection": {},
+          "settings": {
+            "allowDownload": true,
+            "refreshButtonEnabled": true,
+            "fullscreenEnabled": true
+          },
+          "schema": []
+        },
+        {
+          "id": "a8e1a82d-7b2e-4e2f-9939-360aaea85153",
+          "title": "Policy resource kind",
+          "query": "RETURN true;",
+          "width": 3,
+          "height": 2,
+          "x": 8,
+          "y": 4,
+          "type": "select",
+          "selection": {},
+          "settings": {
+            "type": "Free Text",
+            "entityType": "action_keyword",
+            "parameterName": "neodash_action_keyword"
+          },
+          "schema": []
+        },
+        {
+          "id": "62715dd4-5e9d-4683-a4b8-0aa79b4360a7",
+          "title": "S3 buckets and access",
+          "query": " MATCH (s:S3Bucket)-[to]-(a:S3Acl) return a,to,s\n",
+          "width": 3,
+          "height": 2,
+          "x": 0,
+          "y": 5,
+          "type": "graph",
+          "selection": {
+            "S3Acl": "id",
+            "APPLIES_TO": "(label)",
+            "S3Bucket": "name"
+          },
+          "settings": {},
+          "schema": [
+            [
+              "S3Acl",
+              "firstseen",
+              "owner",
+              "granteeid",
+              "displayname",
+              "lastupdated",
+              "permission",
+              "id",
+              "type",
+              "ownerid"
+            ],
+            [
+              "APPLIES_TO",
+              "firstseen",
+              "lastupdated"
+            ],
+            [
+              "S3Bucket",
+              "bucket_key_enabled",
+              "creationdate",
+              "ignore_public_acls",
+              "anonymous_access",
+              "firstseen",
+              "block_public_policy",
+              "block_public_acls",
+              "anonymous_actions",
+              "name",
+              "lastupdated",
+              "encryption_algorithm",
+              "default_encryption",
+              "id",
+              "arn",
+              "restrict_public_buckets"
+            ]
+          ]
+        },
+        {
+          "id": "759eded6-f0de-43c0-abd5-4d9d048c0c72",
+          "title": "S3 buckets with anonymous access",
+          "query": "MATCH (s:S3Bucket) where s.anonymous_access = true return s\n",
+          "width": 3,
+          "height": 2,
+          "x": 3,
+          "y": 5,
+          "type": "graph",
+          "selection": {},
+          "settings": {},
+          "schema": []
+        }
+      ]
+    }
+  ],
+  "parameters": {},
+  "extensions": {
+    "active": true,
+    "activeReducers": []
+  },
+  "uuid": "78beae34-1551-449f-9b40-8cf214b39c52"
+}
