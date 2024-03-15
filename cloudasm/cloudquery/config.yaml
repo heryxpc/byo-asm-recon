@@ -19,4 +19,4 @@ spec:
   registry: cloudquery
   version: "v7.5.0"
   spec:
-    connection_string: "postgres://postgres:pass@postgres:5432/postgres?sslmode=disable" # trufflehog:ignore
+    connection_string: "${POSTGRESQL_CONNECTION_STRING}"

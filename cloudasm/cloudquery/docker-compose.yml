@@ -4,6 +4,7 @@ services:
     command: sync --cq-dir /cache/.cq --log-console --no-log-file --telemetry-level none /config.yml
     environment:
       CLOUDQUERY_API_KEY: ${CLOUDQUERY_API_KEY}
+      POSTGRESQL_CONNECTION_STRING: ${POSTGRESQL_CONNECTION_STRING}
     volumes:
     - ./config.yaml:/config.yml
     - ./.cq:/cache/.cq
