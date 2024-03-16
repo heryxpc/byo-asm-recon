@@ -55,6 +55,7 @@ psql -U postgres < /var/lib/postgresql/scripts/resources.sql
 ```
 
 Add the CloudQuery postgres database as a data source to Grafana (Connections -> Data Sources -> Add new data source)
+- Search for PostgreSQL data-source and select it
 - Set the host url to `postgres:5432`
 - Set credentials postgres/pass
 - Disable TLS/SSL Mode

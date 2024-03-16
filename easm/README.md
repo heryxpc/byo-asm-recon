@@ -1,5 +1,5 @@
 # External Attack Surface Management - discovering domains
-Follow below instructions to perfr
+Follow below instructions to perform an external surface scan using public information and subdomains enumeration.
 
 # Querying with Shodan
 ## Requirements
@@ -42,12 +42,12 @@ Copy config_example.yml to a new file named config.yml and fill the data with yo
 
 Build the docker image
 ```bash
-cd EasyEASM
+cd easyEASM
 docker build -t easyasm .
 ```
 ## Run the docker image
 ```bash
-docker run -v easyasm
+docker run easyasm
 ```
 ## Check the notfications
 Check the notifications sent to configured Slack channel
