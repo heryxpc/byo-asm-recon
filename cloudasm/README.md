@@ -1,5 +1,17 @@
 # Cloud Attack Surface Management - Assets Discovery
 
+# Generating AWS resources to sync/test
+Follow [CloudGoat Quick Start](https://github.com/RhinoSecurityLabs/cloudgoat?tab=readme-ov-file#quick-start)
+
+Create 3 sample scenarios, like:
+* `./cloudgoat.py create iam_privesc_by_key_rotation`
+* `./cloudgoat.py create rce_web_app`
+* `./cloudgoat.py create cicd`
+
+> ⚠️ Remember to [destroy](https://github.com/RhinoSecurityLabs/cloudgoat?tab=readme-ov-file#destroy) all the resources you create after the demo. ⚠️
+
+Run below instructions to sync data using CloudQuery or Cartography.
+
 # CloudQuery AWS Assets Discovery and Visualization
 
 ## Requirements
