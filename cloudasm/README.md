@@ -89,7 +89,7 @@ Add the dbt container to `docker-compose.yml` file.
 
 ## Setup
 - AWS Account
-- AWS authentication credentials ([follow single AWS account setup](https://lyft.github.io/cartography/modules/aws/config.html), at least adding the [SecurityAudit policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html#jf_security-auditor) to your AWS connected credentials)
+- AWS authentication credentials ([follow single AWS account setup](https://cartography-cncf.github.io/cartography/modules/aws/config.html), at least adding the [SecurityAudit policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html#jf_security-auditor) to your AWS connected credentials)
 - [Docker compose](https://docs.docker.com/compose/)
 
 ## Option 1 - use predefined build
@@ -127,7 +127,7 @@ Takes around 30 minutes to complete.
 1. Play around with the information presented
 
 ## Option 3 - use neo4j dump backup
-Would need to `restart` and `healthcheck`options from the [docker-compose.yaml](./cartography/docker-compose.yaml) to avoid Docker to keep restarting neo4j when shutting down.
+Would need to comment `restart` and `healthcheck`options from the [docker-compose.yaml](./cartography/docker-compose.yaml) to avoid Docker to keep restarting neo4j when shutting down.
 ```yml
 # restart: unless-stopped
 # healthcheck:
