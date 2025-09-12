@@ -4,9 +4,10 @@
 Follow [CloudGoat Quick Start](https://github.com/RhinoSecurityLabs/cloudgoat?tab=readme-ov-file#quick-start)
 
 Create 3 sample scenarios, like:
-* `./cloudgoat.py create iam_privesc_by_key_rotation`
-* `./cloudgoat.py create rce_web_app`
-* `./cloudgoat.py create cicd`
+* `cloudgoat create iam_privesc_by_key_rotation`
+* `cloudgoat create iam_privesc_by_rollback`
+* `cloudgoat create cloud_breach_s3`
+* `cloudgoat create ec2_ssrf`
 
 > ⚠️ Remember to [destroy](https://github.com/RhinoSecurityLabs/cloudgoat?tab=readme-ov-file#destroy) all the resources you create after the demo. ⚠️
 
@@ -91,44 +92,38 @@ Add the dbt container to `docker-compose.yml` file.
 - AWS authentication credentials ([follow single AWS account setup](https://lyft.github.io/cartography/modules/aws/config.html), at least adding the [SecurityAudit policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html#jf_security-auditor) to your AWS connected credentials)
 - [Docker compose](https://docs.docker.com/compose/)
 
-## Option 1 - clone cartography and build locally
-Used a slightly different [Dockerfile](./cartography/Dockerfile) from the [official one](https://github.com/lyft/cartography/blob/master/Dockerfile), hence you have to build it locally.
+## Option 1 - use predefined build
+Use the [docker-compose-yml](./cartography/docker-compose.yml)
 
+## Option 2 - clone cartography and build locally
 Clone locally Cartography GitHub repository
 ```bash
 cd cartography
-git clone https://github.com/lyft/cartography.git
-docker build -t lyft/cartography .
+git clone https://github.com/cartography-cncf/cartography/
+docker build -t cartography-cncf/cartography:latest .
 ```
+Update the [docker-compose-yml](./cartography/docker-compose.yml) file to point out to `cartography-cncf/cartography`
 
-## Option 2 - use predefined build
-Update the [docker-compose-yml](./cartography/docker-compose.yml) file to point out to [heryxpc/cartography](https://hub.docker.com/repository/docker/heryxpc/cartography/general)
-```yaml
-  cartography:
-    image: heryxpc/cartography
-    user: cartography
-    init: true
-```
-
-## Build containers with Docker compose
+## Run the containers with Docker compose
 ```bash
 docker-compose up -d
 ```
 
 ## Run Cartography sync
 ```bash
-docker-compose run cartography cartography --neo4j-uri bolt://neo4j:7687
+docker compose run cartography --neo4j-uri bolt://neo4j:7687 --selected-modules aws
 ```
-Takes around 45 minutes to complete.
+Takes around 30 minutes to complete.
 
 ## Visualize data with NeoDash
 1. Open NeoDash at http://localhost:5005/
 1. Click on New Dashboard
-1. Use defaults and set `localhost` as `Hostname``
-1. Click the _load_ button from the left panel (small cloud with up arrow)
+1. Use `bolt` as protocol and set `localhost` as `Hostname`
+1. Expand the left panel
+1. Click on the `+` sign and select _Import_
 1. Choose _Select From File_
 1. Open the file [neodash/dashboard.json](./neodash/dashboard.json)
-1. Click on _Load Dashboard_
+1. Click on _Import_
 1. Play around with the information presented
 
 ## Option 3 - use neo4j dump backup
