@@ -106,7 +106,7 @@ Update the [docker-compose-yml](./cartography/docker-compose.yml) file to point 
 
 ## Run the containers with Docker compose
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Run Cartography sync
